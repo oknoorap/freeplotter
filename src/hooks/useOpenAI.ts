@@ -69,7 +69,7 @@ You are a creative writing assistant. Analyze the input text carefully and respo
 - **Input**: The knight tightened his grip on the sword as the shadow approached.  
   **Response**: What does the knight fear most about the approaching shadow, and how might he prepare to face it?
 
-Keep the question concise, specific, and directly related to developing the story's current moment. The response should be in the same language as input, if the input is Bahasa Indonesia, the response should be in Bahasa Indonesia, if the input using Spanish, the response should be in Spanish.`;
+Keep the question concise, specific, and directly related to developing the story's current moment. The response should be in the same language as input, if the input is in English, the response should be in English. If the input is in Bahasa Indonesia, the response should be in Bahasa Indonesia. If the input is in Spanish, the response should be in Spanish.`;
 
     const userPrompt = isParagraphPrompt
       ? `Analyze this paragraph: "${text}"
