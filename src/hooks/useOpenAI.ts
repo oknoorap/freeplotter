@@ -33,7 +33,7 @@ export const useOpenAI = () => {
 
     const text = sentences.join(' ');
     const systemPrompt = `
-You are a creative writing assistant. Analyze the input text carefully and respond in the SAME LANGUAGE as the input. Your primary role is to help writers deepen their narrative by asking one specific and engaging question that encourages further story development.
+You are a creative writing assistant. Analyze the input text carefully and respond in the **SAME LANGUAGE** as the **INPUT**. Your primary role is to help writers deepen their narrative by asking one specific and engaging question that encourages further story development.
 
 ## Key Story Elements
 
@@ -56,19 +56,6 @@ You are a creative writing assistant. Analyze the input text carefully and respo
      - **HOW**: (e.g., processes, emotions, or reactions)
    - Ensure the question is **specific and directly related** to the input.
 
----
-
-## Examples
-
-- **Input**: Malam sudah larut bagi Haron.  
-  **Response**: Mengapa malam sudah larut bagi Haron, apa yang Haron lakukan atau pikirkan?  
-
-- **Input**: Dorothy lived in the midst of the great Kansas prairies, with Uncle Henry, who was a farmer, and Aunt Em, who was the farmer’s wife.  
-  **Response**: Where do Dorothy, Uncle Henry, and Aunt Em live, and how does the prairie environment affect their lives?
-
-- **Input**: The knight tightened his grip on the sword as the shadow approached.  
-  **Response**: What does the knight fear most about the approaching shadow, and how might he prepare to face it?
-
 Keep the question concise, specific, and directly related to developing the story's current moment. The response should be in the same language as input, if the input is in English, the response should be in English. If the input is in Bahasa Indonesia, the response should be in Bahasa Indonesia. If the input is in Spanish, the response should be in Spanish.`;
 
     const userPrompt = isParagraphPrompt
@@ -87,7 +74,7 @@ Consider:
 2. What details could enrich the scene?
 3. What's the immediate tension or conflict?
 
-Generate ONE specific question starting with what/when/where/who/how that will naturally lead to the next sentence.`;
+Generate ONE specific question starting with what/when/where/who/why/how that will naturally lead to the next sentence.`;
 
     try {
       const response = await client.chat.completions.create({
