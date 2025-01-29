@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import { Brain, Settings, Menu, PlusCircle } from "lucide-react";
+import { Brain, Settings, Menu, PlusCircle, Edit2, Check, X as XIcon } from "lucide-react";
 import { WritingPrompt } from "./components/WritingPrompt";
 import { SentenceList } from "./components/SentenceList";
 import { SettingsModal } from "./components/SettingsModal";
@@ -12,6 +12,8 @@ function App() {
   const { apiKey, setApiKey, generateNextPrompt, isInitialized } = useOpenAI();
   const [sessions, setSessions] = useLocalStorage<WritingSession[]>("writing_sessions", []);
   const [currentSession, setCurrentSession] = useState<string | null>(null);
+  const [editingParagraphIndex, setEditingParagraphIndex] = useState<number | null>(null);
+  const [editingParagraphText, setEditingParagraphText] = useState("");
   const [state, setState] = useState<WritingState>({
     sentences: [],
     paragraphs: [],
@@ -43,7 +45,7 @@ function App() {
       ...prev,
       sentences,
       isLoading: true,
-      currentPrompt: "Analyzing your story's progression...", // Loading state message
+      currentPrompt: "Analyzing your story's progression...",
     }));
 
     try {
@@ -69,7 +71,7 @@ function App() {
       paragraphs,
       sentences: [],
       isLoading: true,
-      currentPrompt: "Contemplating the next chapter...", // Loading state message
+      currentPrompt: "Contemplating the next chapter...",
     }));
 
     try {
@@ -105,6 +107,32 @@ function App() {
       currentPrompt: null,
     }));
     setIsSidebarOpen(false);
+  };
+
+  const handleEditParagraph = (index: number) => {
+    setEditingParagraphIndex(index);
+    setEditingParagraphText(state.paragraphs[index]);
+  };
+
+  const handleSaveParagraph = async () => {
+    if (editingParagraphIndex === null) return;
+
+    const updatedParagraphs = [...state.paragraphs];
+    updatedParagraphs[editingParagraphIndex] = editingParagraphText;
+
+    setState((prev) => ({
+      ...prev,
+      paragraphs: updatedParagraphs,
+      currentPrompt: "Analyzing the revised paragraph...",
+    }));
+
+    setEditingParagraphIndex(null);
+    setEditingParagraphText("");
+  };
+
+  const handleCancelEdit = () => {
+    setEditingParagraphIndex(null);
+    setEditingParagraphText("");
   };
 
   return (
@@ -156,9 +184,45 @@ function App() {
             {state.paragraphs.length > 0 && (
               <div className="space-y-4">
                 {state.paragraphs.map((paragraph, index) => (
-                  <p key={index} className="text-white/90 leading-relaxed">
-                    {paragraph}
-                  </p>
+                  <div key={index} className="group relative">
+                    {editingParagraphIndex === index ? (
+                      <div className="space-y-2">
+                        <textarea
+                          value={editingParagraphText}
+                          onChange={(e) => setEditingParagraphText(e.target.value)}
+                          className="w-full p-4 bg-gray-800 border border-gray-700 rounded-lg text-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          rows={Math.max(3, editingParagraphText.split('\n').length)}
+                        />
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={handleSaveParagraph}
+                            className="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-1"
+                          >
+                            <Check size={16} />
+                            <span>Save</span>
+                          </button>
+                          <button
+                            onClick={handleCancelEdit}
+                            className="px-3 py-1 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors flex items-center space-x-1"
+                          >
+                            <XIcon size={16} />
+                            <span>Cancel</span>
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="relative">
+                        <p className="text-white/90 leading-relaxed pr-10">{paragraph}</p>
+                        <button
+                          onClick={() => handleEditParagraph(index)}
+                          className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          title="Edit paragraph"
+                        >
+                          <Edit2 size={20} className="text-blue-400 hover:text-blue-300" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
             )}
@@ -200,6 +264,7 @@ function App() {
         onClose={() => setIsSidebarOpen(false)}
         sessions={sessions}
         onSessionSelect={handleSessionSelect}
+        currentSessionId={currentSession}
       />
     </div>
   );
