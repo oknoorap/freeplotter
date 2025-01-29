@@ -38,15 +38,16 @@ function App() {
   }, [state.sentences, state.paragraphs]);
 
   const handleSentenceSubmit = async (text: string) => {
+    const sentences = [...state.sentences, text]
     setState((prev) => ({
       ...prev,
-      sentences: [...prev.sentences, text],
+      sentences,
       isLoading: true,
       currentPrompt: "Analyzing your story's progression...", // Loading state message
     }));
 
     try {
-      const nextPrompt = await generateNextPrompt([...state.sentences, text]);
+      const nextPrompt = await generateNextPrompt([...state.paragraphs, ...sentences]);
       setState((prev) => ({
         ...prev,
         currentPrompt: nextPrompt,
