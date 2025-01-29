@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PenLine, Key, Loader } from 'lucide-react';
+import { PenLine, Key, Loader, SendIcon } from 'lucide-react';
 
 interface WritingPromptProps {
   onSubmit: (text: string) => void;
@@ -40,16 +40,19 @@ export const WritingPrompt: React.FC<WritingPromptProps> = ({
             className="w-full px-14 py-4 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             disabled={isLoading}
           /> :
-          <textarea
-            onChange={(e) => setText(e.target.value)}
-            placeholder={placeholder}
-            rows={2}
-            // @ts-ignore
-            style={{fieldSizing: 'content' }}
-            className="w-full px-14 py-4 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            disabled={isLoading}>
-              {text}
-          </textarea>
+          <div className="relative">
+            <textarea
+              onChange={(e) => setText(e.target.value)}
+              placeholder={placeholder}
+              rows={2}
+              // @ts-ignore
+              style={{fieldSizing: 'content' }}
+              className="w-full px-14 py-4 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              disabled={isLoading}>
+                {text}
+            </textarea>
+            <button onClick={handleSubmit} className="absolute text-gray-500 hover:text-gray-200 bottom-4 right-4"><SendIcon size={24} /></button>
+          </div>
         }
         {isLoading && (
           <div className="absolute right-4 top-4">
