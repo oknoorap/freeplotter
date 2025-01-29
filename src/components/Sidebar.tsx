@@ -8,6 +8,7 @@ interface SidebarProps {
   onClose: () => void;
   sessions: WritingSession[];
   onSessionSelect: (session: WritingSession) => void;
+  currentSessionId: string | null;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -15,6 +16,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onClose,
   sessions,
   onSessionSelect,
+  currentSessionId,
 }) => {
   if (!isOpen) return null;
 
@@ -27,22 +29,34 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </button>
       </div>
       <div className="p-4 space-y-4 overflow-y-auto h-[calc(100vh-64px)]">
-        {sessions.map((session) => (
-          <button
-            key={session.id}
-            onClick={() => onSessionSelect(session)}
-            className="w-full text-left p-4 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors"
-          >
-            <div className="flex items-center space-x-2 text-gray-300 mb-2">
-              <Clock size={16} />
-              <span>{format(new Date(session.date), 'PPP')}</span>
-            </div>
-            <p className="text-sm text-gray-400 line-clamp-2">
-              {session.paragraphs[0] || session.sentences[0]}
-            </p>
-          </button>
-        ))}
+        {sessions.map((session) => {
+          const isActive = session.id === currentSessionId;
+          return (
+            <button
+              key={session.id}
+              onClick={() => onSessionSelect(session)}
+              className={`w-full text-left p-4 rounded-lg transition-colors ${
+                isActive
+                  ? 'bg-blue-600 hover:bg-blue-700'
+                  : 'bg-gray-700 hover:bg-gray-600'
+              }`}
+            >
+              <div className="flex items-center space-x-2 text-gray-300 mb-2">
+                <Clock size={16} />
+                <span>{format(new Date(session.date), 'PPP')}</span>
+                {isActive && (
+                  <span className="px-2 py-0.5 text-xs bg-blue-500 text-white rounded-full ml-auto">
+                    Active
+                  </span>
+                )}
+              </div>
+              <p className="text-sm text-gray-200 line-clamp-2">
+                {session.paragraphs[0] || session.sentences[0]}
+              </p>
+            </button>
+          );
+        })}
       </div>
     </div>
   );
-};
+}
