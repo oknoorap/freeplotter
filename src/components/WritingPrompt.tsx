@@ -30,14 +30,27 @@ export const WritingPrompt: React.FC<WritingPromptProps> = ({
         <div className="absolute left-4 top-4 text-gray-400">
           {isApiKeyInput ? <Key size={24} /> : <PenLine size={24} />}
         </div>
-        <input
-          type={isApiKeyInput ? "password" : "text"}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder={placeholder}
-          className="w-full px-14 py-4 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          disabled={isLoading}
-        />
+
+        {isApiKeyInput ?
+          <input
+            type="password"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder={placeholder}
+            className="w-full px-14 py-4 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            disabled={isLoading}
+          /> :
+          <textarea
+            onChange={(e) => setText(e.target.value)}
+            placeholder={placeholder}
+            rows={2}
+            // @ts-ignore
+            style={{fieldSizing: 'content' }}
+            className="w-full px-14 py-4 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            disabled={isLoading}>
+              {text}
+          </textarea>
+        }
         {isLoading && (
           <div className="absolute right-4 top-4">
             <Loader className="animate-spin text-gray-400" size={24} />
