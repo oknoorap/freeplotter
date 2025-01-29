@@ -147,7 +147,7 @@ Generate **ONE specific question** starting with **what/when/where/who/why/how**
 
     try {
       const response = await client.chat.completions.create({
-        model: "o1",
+        model: "chatgpt-4o-latest",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
