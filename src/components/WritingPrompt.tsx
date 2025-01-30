@@ -21,8 +21,13 @@ export const WritingPrompt: React.FC<WritingPromptProps> = ({
     e.preventDefault();
     onSubmit(text.trim());
     setText('');
-    
   };
+
+  const handleKeydown = (e: React.KeyboardEvent) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+      handleSubmit(e)
+    }
+  }
 
   useEffect(() => {
     if (!isLoading) {
@@ -42,6 +47,7 @@ export const WritingPrompt: React.FC<WritingPromptProps> = ({
             type="password"
             value={text}
             onChange={(e) => setText(e.target.value)}
+            onKeyDown={handleKeydown}
             placeholder={placeholder}
             className="w-full px-14 py-4 bg-gray-800/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             disabled={isLoading}
@@ -50,6 +56,7 @@ export const WritingPrompt: React.FC<WritingPromptProps> = ({
             <textarea
               ref={textAreaRef}
               onChange={(e) => setText(e.target.value)}
+              onKeyDown={handleKeydown}
               placeholder={placeholder}
               rows={2}
               // @ts-ignore
@@ -58,14 +65,9 @@ export const WritingPrompt: React.FC<WritingPromptProps> = ({
               disabled={isLoading}
               value={text}
             />
-            <button onClick={handleSubmit} className="absolute text-gray-500 hover:text-gray-200 bottom-4 right-4"><SendIcon size={24} /></button>
+            {isLoading ? <div className="absolute text-gray-500 hover:text-gray-200 top-4 right-4"><Loader className="animate-spin text-gray-400" size={24} /> </div>: <button onClick={handleSubmit} className="absolute text-gray-500 hover:text-gray-200 top-4 right-4"><SendIcon size={24} /></button>}
           </div>
         }
-        {isLoading && (
-          <div className="absolute right-4 top-4">
-            <Loader className="animate-spin text-gray-400" size={24} />
-          </div>
-        )}
       </div>
     </form>
   );
