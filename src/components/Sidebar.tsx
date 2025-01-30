@@ -1,7 +1,10 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { X, Clock } from 'lucide-react';
+import cx from 'clsx'
+
 import type { WritingSession } from '../types';
+import clsx from 'clsx';
 
 interface SidebarProps {
   isOpen: boolean;
@@ -18,10 +21,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onSessionSelect,
   currentSessionId,
 }) => {
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-y-0 left-0 w-80 bg-gray-800 shadow-xl z-40 transform transition-transform duration-300 ease-in-out z-[9999]">
+    <>
+    <div className={clsx("fixed z-[999] top-0 left-0 w-screen h-screen bg-stone-100 transition-all ease-in-out", isOpen ? 'bg-opacity-20' : 'bg-opacity-0 pointer-events-none')}  onClick={onClose} />
+    <div className={cx(`fixed inset-y-0 left-0 w-80 bg-gray-800 shadow-xl z-40 transform transition-transform duration-300 ease-in-out z-[9999]`, isOpen ? 'translate-x-0' : '-translate-x-[500px]')}>
       <div className="p-4 border-b border-gray-700 flex justify-between items-center">
         <h2 className="text-xl font-bold">History</h2>
         <button onClick={onClose} className="text-gray-400 hover:text-white">
@@ -58,5 +61,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
         })}
       </div>
     </div>
+    </>
   );
 }
