@@ -19,6 +19,8 @@ export const WritingPrompt: React.FC<WritingPromptProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const cleanText = text.trim();
+    if (!cleanText) return;
     onSubmit(text.trim());
     setText('');
   };
@@ -65,7 +67,7 @@ export const WritingPrompt: React.FC<WritingPromptProps> = ({
               disabled={isLoading}
               value={text}
             />
-            {isLoading ? <div className="absolute text-gray-500 hover:text-gray-200 top-4 right-4"><Loader className="animate-spin text-gray-400" size={24} /> </div>: <button onClick={handleSubmit} className="absolute text-gray-500 hover:text-gray-200 top-4 right-4"><SendIcon size={24} /></button>}
+            {isLoading ? <div className="absolute text-gray-500 hover:text-gray-200 top-4 right-4"><Loader className="animate-spin text-gray-400" size={24} /> </div>: <button disabled={!text?.trim()} onClick={handleSubmit} className="absolute text-gray-500 hover:text-gray-200 top-4 right-4"><SendIcon size={24} /></button>}
           </div>
         }
       </div>
