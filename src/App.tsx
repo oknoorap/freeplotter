@@ -170,7 +170,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-900 text-stone-300">
       <div className="fixed top-4 left-4 flex space-x-2 z-50">
         <button
           onClick={() => setIsSettingsOpen(true)}
@@ -216,7 +216,7 @@ function App() {
         ) : (
           <div className="space-y-8">
             {state.paragraphs.length > 0 && (
-              <div className="space-y-4">
+              <div className="space-y-8">
                 {state.paragraphs.map((paragraph, index) => (
                   <div key={index} className="group relative">
                     {editingParagraphIndex === index ? (
@@ -224,8 +224,10 @@ function App() {
                         <textarea
                           value={editingParagraphText}
                           onChange={(e) => setEditingParagraphText(e.target.value)}
-                          className="w-full p-4 bg-gray-800 border border-gray-700 rounded-lg text-white resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full p-4 bg-gray-800 border border-gray-700 rounded-lg text-stone-300 text-lg resize-none focus:outline-none focus:ring-2 focus:ring-blue-500"
                           rows={Math.max(3, editingParagraphText.split('\n').length)}
+                          // @ts-ignore
+                          style={{fieldSizing: 'content' }}
                         />
                         <div className="flex space-x-2">
                           <button
@@ -246,7 +248,7 @@ function App() {
                       </div>
                     ) : (
                       <div className="relative">
-                        <p className="text-white/90 leading-relaxed pr-10" dangerouslySetInnerHTML={{__html: paragraph.replace(/\n/g, "<br />") }} />
+                        <p className="text-white/85 leading-relaxed pr-10 font-serif text-lg" dangerouslySetInnerHTML={{__html: paragraph.replace(/\n/g, "<br />") }} />
                         <button
                           disabled={paragraphState.isLoading}
                           onClick={() => handleEditParagraph(index)}
