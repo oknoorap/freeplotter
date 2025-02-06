@@ -28,7 +28,7 @@ export const useOpenAI = () => {
     }
   }, [apiKey]);
 
-  const generateNextPrompt = async (sentences: string[], isParagraphPrompt = false): Promise<string> => {
+  const getSuggestion = async (sentences: string[], isParagraphPrompt = false): Promise<string> => {
     if (!client) throw new Error('OpenAI client not initialized');
 
     const text = sentences.join(' ');
@@ -163,10 +163,68 @@ Generate **ONE specific question** starting with **what/when/where/who/why/how**
     }
   };
 
+  const getShowDontTell = async (paragraph: string): Promise<string> => {
+    if (!client) throw new Error('OpenAI client not initialized');
+    const systemPrompt = `
+## AI Prompt: Show, Don’t Tell Feedback
+
+### **Task:**  
+You are an advanced writing assistant. Your job is to analyze a single paragraph of text, detect its language, and respond in the same language. Then, rewrite the paragraph using the "show, don't tell" technique to make it more immersive and engaging.  
+
+---
+
+## Steps to Generate the Response
+
+1. **Analyze the INPUT LANGUAGE**:
+- Detect the language of the input text (e.g., English, Spanish, French, etc.).
+
+2. **Analyze the INPUT CONTEXT**:
+- Identify the key story elements (e.g., tension, character development, setting, etc.).
+- Determine the most relevant question to ask based on the context.
+
+3. **Respond Based on the CONTEXT**:
+- Generate a concise, specific suggestion and convert INPUT paragraph to "show, don't tell" technique.
+- Incorporate vivid sensory details or emotional depth where appropriate.
+
+4. **Translate Based on the INPUT LANGUAGE**:
+- Ensure the response is in the **exact same language** as the input. Do not translate unless explicitly requested.
+
+### **Example:**  
+
+#### **Input:**  
+"She was very sad when she heard the news."
+
+#### **Output:**  
+"Her hands trembled as she clutched the phone, her breath hitching. A lump formed in her throat, and hot tears welled in her eyes, blurring the screen before her."
+---
+    `;
+    const userPrompt = `
+### **Now, process this paragraph:**
+${paragraph}
+    `
+    try {
+      const response = await client.chat.completions.create({
+        model: "chatgpt-4o-latest",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userPrompt }
+        ],
+        max_tokens: 2000,
+        temperature: 0.7,
+      });
+
+      return response.choices[0].message.content || "What happens next in your story?";
+    } catch (error) {
+      console.error('Error generating prompt:', error);
+      return "What would you like to write about next?";
+    }
+  }
+
   return {
     apiKey,
     setApiKey,
-    generateNextPrompt,
+    getSuggestion,
+    getShowDontTell,
     isInitialized: !!client
   };
 };

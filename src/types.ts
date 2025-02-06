@@ -6,6 +6,12 @@ export interface WritingState {
   apiKey: string | null;
 }
 
+export interface SuggestionState {
+  paragraphIndex: number;
+  currentSuggestion?: string;
+  isLoading: boolean;
+}
+
 export interface OpenAIResponse {
   nextPrompt: string;
 }

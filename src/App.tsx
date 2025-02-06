@@ -1,15 +1,15 @@
 import { useState, useEffect } from "react";
 import { useLocalStorage } from "usehooks-ts";
-import { Brain, Settings, Menu, PlusCircle, Edit2, Check, X as XIcon } from "lucide-react";
+import { Brain, Settings, Menu, PlusCircle, Edit2, Check, X as XIcon, Sparkles, MessageSquare, Loader  } from "lucide-react";
 import { WritingPrompt } from "./components/WritingPrompt";
 import { SentenceList } from "./components/SentenceList";
 import { SettingsModal } from "./components/SettingsModal";
 import { Sidebar } from "./components/Sidebar";
 import { useOpenAI } from "./hooks/useOpenAI";
-import type { WritingState, WritingSession } from "./types";
+import type { WritingState, WritingSession, SuggestionState } from "./types";
 
 function App() {
-  const { apiKey, setApiKey, generateNextPrompt, isInitialized } = useOpenAI();
+  const { apiKey, setApiKey, getSuggestion, getShowDontTell, isInitialized } = useOpenAI();
   const [sessions, setSessions] = useLocalStorage<WritingSession[]>("writing_sessions", []);
   const [currentSession, setCurrentSession] = useState<string | null>(null);
   const [editingParagraphIndex, setEditingParagraphIndex] = useState<number | null>(null);
@@ -21,6 +21,10 @@ function App() {
     isLoading: false,
     apiKey: null,
   });
+  const [paragraphState, setParagraphState] = useState<SuggestionState>({
+    paragraphIndex: 0,
+    isLoading: false
+  })
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -49,7 +53,7 @@ function App() {
     }));
 
     try {
-      const nextPrompt = await generateNextPrompt([...state.paragraphs, ...sentences]);
+      const nextPrompt = await getSuggestion([...state.paragraphs, ...sentences]);
       setState((prev) => ({
         ...prev,
         currentPrompt: nextPrompt,
@@ -75,7 +79,7 @@ function App() {
     }));
 
     try {
-      const nextPrompt = await generateNextPrompt(paragraphs, true);
+      const nextPrompt = await getSuggestion(paragraphs, true);
       setState((prev) => ({
         ...prev,
         currentPrompt: nextPrompt,
@@ -114,6 +118,35 @@ function App() {
     setEditingParagraphText(state.paragraphs[index]);
   };
 
+  const handleGetSuggestion = async (index: number) => {
+    setParagraphState((prev) => ({
+      ...prev,
+      paragraphIndex: index,
+      currentSuggestion: "Thinking possibilities of \"Show Don't Tell\" suggestion...",
+      isLoading: true,
+    }));
+
+    try {
+      const suggestion = await getShowDontTell(state.paragraphs[index]);
+      setParagraphState((prev) => ({
+        ...prev,
+        currentSuggestion: suggestion,
+        isLoading: false,
+      }));
+    } catch (error) {
+      console.error("Error generating prompt:", error);
+      setParagraphState((prev) => ({ ...prev, isLoading: false }));
+    }
+  };
+
+  const handleDismissSuggestion = () => {
+    setParagraphState({
+      isLoading: false,
+      paragraphIndex: 0,
+      currentSuggestion: undefined
+    })
+  };
+
   const handleSaveParagraph = async () => {
     if (editingParagraphIndex === null) return;
 
@@ -129,6 +162,7 @@ function App() {
     setEditingParagraphIndex(null);
     setEditingParagraphText("");
   };
+
 
   const handleCancelEdit = () => {
     setEditingParagraphIndex(null);
@@ -212,14 +246,53 @@ function App() {
                       </div>
                     ) : (
                       <div className="relative">
-                        <p className="text-white/90 leading-relaxed pr-10">{paragraph}</p>
+                        <p className="text-white/90 leading-relaxed pr-10" dangerouslySetInnerHTML={{__html: paragraph.replace(/\n/g, "<br />") }} />
                         <button
+                          disabled={paragraphState.isLoading}
                           onClick={() => handleEditParagraph(index)}
-                          className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                          className="absolute top-0 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacity disabled:opacity-20"
                           title="Edit paragraph"
                         >
                           <Edit2 size={20} className="text-blue-400 hover:text-blue-300" />
                         </button>
+                        {!paragraphState.currentSuggestion && (<button
+                          disabled={paragraphState.isLoading}
+                          onClick={() => handleGetSuggestion(index)}
+                          className="absolute top-10 right-0 p-2 opacity-0 group-hover:opacity-100 transition-opacit disabled:opacity-20"
+                          title="Get suggestion"
+                        >
+                          {paragraphState.isLoading ? <Loader size={20} className="text-green-500 animate-spin" /> :
+                          <Sparkles size={20} className="text-blue-400 hover:text-blue-300" />}
+                        </button>)}
+                      </div>
+                    )}
+
+                    {paragraphState.paragraphIndex === index && !!paragraphState.currentSuggestion && (
+                      <div className="my-2 py-2 px-4 flex flex-col gap-4">
+                        <div className="flex items-start space-x-3">
+                          <div className="flex-shrink-0 mt-1">
+                            {paragraphState.isLoading ? (
+                              <Loader size={20} className="text-green-500 animate-spin" />
+                            ) : (
+                              <MessageSquare size={20} className="text-green-500" />
+                            )}
+                          </div>
+                          <p className="text-green-400">
+                            {paragraphState.currentSuggestion}
+                          </p>
+                          
+                        </div>
+                        {!paragraphState.isLoading && (
+                          <div className="ml-8">
+                            <button
+                              onClick={handleDismissSuggestion}
+                              className="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-1"
+                            >
+                              <Check size={16} />
+                              <span>OK</span>
+                            </button>
+                            </div>
+                          )}
                       </div>
                     )}
                   </div>
