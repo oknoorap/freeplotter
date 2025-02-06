@@ -248,7 +248,7 @@ function App() {
                       </div>
                     ) : (
                       <div className="relative">
-                        <p className="text-white/85 leading-relaxed pr-10 font-serif text-lg" dangerouslySetInnerHTML={{__html: paragraph.replace(/\n/g, "<br />") }} />
+                        <p className="text-white/85 leading-relaxed pr-10 font-serif text-xl" dangerouslySetInnerHTML={{__html: paragraph.replace(/\n/g, "<br />") }} />
                         <button
                           disabled={paragraphState.isLoading}
                           onClick={() => handleEditParagraph(index)}
@@ -279,7 +279,7 @@ function App() {
                               <MessageSquare size={20} className="text-green-500" />
                             )}
                           </div>
-                          <p className="text-green-400">
+                          <p className="text-green-400 select-none pointer-events-none">
                             {paragraphState.currentSuggestion}
                           </p>
                           
