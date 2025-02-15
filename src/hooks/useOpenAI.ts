@@ -28,7 +28,7 @@ export const useOpenAI = () => {
     }
   }, [apiKey]);
 
-  const getSuggestion = async (sentences: string[], isParagraphPrompt = false): Promise<string> => {
+  const getSuggestion = async (sentences: string[], prevParagraph: string, isParagraphPrompt = false): Promise<string> => {
     if (!client) throw new Error('OpenAI client not initialized');
 
     const text = sentences.join(' ');
@@ -122,7 +122,7 @@ You are a creative writing assistant. Your primary role is to help writers deepe
 `;
 
     const userPrompt = isParagraphPrompt
-      ? `Analyze this paragraph: "${text}"
+      ? `Previous paragraph: ${prevParagraph}. Analyze this paragraph: "${text}"
 
 Consider:
 1. What narrative elements need development?
@@ -130,7 +130,7 @@ Consider:
 3. What's missing from the scene?
 
 Generate ONE specific question starting with what/when/where/who/why/how that will help develop the next paragraph.`
-      : `Based on: "${text}"
+      : `Previous paragraph: ${prevParagraph}. Based on: "${text}"
 
 ## Additional Considerations
 
@@ -163,7 +163,7 @@ Generate **ONE specific question** starting with **what/when/where/who/why/how**
     }
   };
 
-  const getShowDontTell = async (paragraph: string): Promise<string> => {
+  const getShowDontTell = async (paragraph: string, prevParagraph: string): Promise<string> => {
     if (!client) throw new Error('OpenAI client not initialized');
     const systemPrompt = `
 ## AI Prompt: Show, Don’t Tell Feedback
@@ -199,6 +199,9 @@ You are an advanced writing assistant. Your job is to analyze a single paragraph
 ---
     `;
     const userPrompt = `
+### **Previous Paragraphs as Context:**
+${prevParagraph}
+
 ### **Now, process this paragraph:**
 ${paragraph}
     `

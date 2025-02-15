@@ -44,7 +44,7 @@ function App() {
   }, [state.sentences, state.paragraphs]);
 
   const handleSentenceSubmit = async (text: string) => {
-    const sentences = [...state.sentences, text]
+    const sentences = [...state.sentences, text];
     setState((prev) => ({
       ...prev,
       sentences,
@@ -53,7 +53,7 @@ function App() {
     }));
 
     try {
-      const nextPrompt = await getSuggestion([...state.paragraphs, ...sentences]);
+      const nextPrompt = await getSuggestion(sentences, state.paragraphs.join('\n'));
       setState((prev) => ({
         ...prev,
         currentPrompt: nextPrompt,
@@ -79,7 +79,7 @@ function App() {
     }));
 
     try {
-      const nextPrompt = await getSuggestion(paragraphs, true);
+      const nextPrompt = await getSuggestion([newParagraph], state.paragraphs.join('\n'), true);
       setState((prev) => ({
         ...prev,
         currentPrompt: nextPrompt,
@@ -127,7 +127,8 @@ function App() {
     }));
 
     try {
-      const suggestion = await getShowDontTell(state.paragraphs[index]);
+      const previousParagraph = state.paragraphs.splice(0, index);
+      const suggestion = await getShowDontTell(state.paragraphs[index], previousParagraph.join('\n'));
       setParagraphState((prev) => ({
         ...prev,
         currentSuggestion: suggestion,
@@ -279,10 +280,7 @@ function App() {
                               <MessageSquare size={20} className="text-green-500" />
                             )}
                           </div>
-                          <p className="text-green-400 select-none pointer-events-none">
-                            {paragraphState.currentSuggestion}
-                          </p>
-                          
+                          <p className="text-green-400 select-none pointer-events-none"  dangerouslySetInnerHTML={{__html: paragraphState.currentSuggestion.replace(/\n/g, "<br />") }} />
                         </div>
                         {!paragraphState.isLoading && (
                           <div className="ml-8">
