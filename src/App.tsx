@@ -127,7 +127,7 @@ function App() {
     }));
 
     try {
-      const previousParagraph = state.paragraphs.splice(0, index);
+      const previousParagraph = [...state.paragraphs].splice(0, index);
       const suggestion = await getShowDontTell(state.paragraphs[index], previousParagraph.join('\n'));
       setParagraphState((prev) => ({
         ...prev,
