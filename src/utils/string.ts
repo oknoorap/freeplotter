@@ -1,0 +1,1 @@
+export const transformToNewLine = (paragraph: string) => paragraph.replace(/\n/g, "<br />");

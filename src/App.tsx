@@ -7,6 +7,7 @@ import { SettingsModal } from "./components/SettingsModal";
 import { Sidebar } from "./components/Sidebar";
 import { useOpenAI } from "./hooks/useOpenAI";
 import type { WritingState, WritingSession, SuggestionState } from "./types";
+import { transformToNewLine } from "./utils/string";
 
 function App() {
   const { apiKey, setApiKey, getSuggestion, getShowDontTell, isInitialized } = useOpenAI();
@@ -249,7 +250,7 @@ function App() {
                       </div>
                     ) : (
                       <div className="relative">
-                        <p className="text-white/85 leading-relaxed pr-10 font-serif text-xl" dangerouslySetInnerHTML={{__html: paragraph.replace(/\n/g, "<br />") }} />
+                        <p className="text-white/85 leading-relaxed pr-10 font-serif text-xl" dangerouslySetInnerHTML={{__html: transformToNewLine(paragraph) }} />
                         <button
                           disabled={paragraphState.isLoading}
                           onClick={() => handleEditParagraph(index)}
@@ -280,7 +281,7 @@ function App() {
                               <MessageSquare size={20} className="text-green-500" />
                             )}
                           </div>
-                          <p className="text-green-400 select-none pointer-events-none"  dangerouslySetInnerHTML={{__html: paragraphState.currentSuggestion.replace(/\n/g, "<br />") }} />
+                          <p className="text-green-400 select-none pointer-events-none"  dangerouslySetInnerHTML={{__html: transformToNewLine(paragraphState.currentSuggestion) }} />
                         </div>
                         {!paragraphState.isLoading && (
                           <div className="ml-8">

@@ -1,5 +1,6 @@
 import React from 'react';
 import { MessageSquare, Loader } from 'lucide-react';
+import { transformToNewLine } from '../utils/string';
 
 interface SentenceListProps {
   sentences: string[];
@@ -19,7 +20,7 @@ export const SentenceList: React.FC<SentenceListProps> = ({
           <div className="flex-shrink-0 mt-1">
             <MessageSquare size={20} className="text-blue-500" />
           </div>
-          <p className="text-white/90">{sentence}</p>
+          <p className="text-white/90" dangerouslySetInnerHTML={{__html: transformToNewLine(sentence) }} />
         </div>
       ))}
       {(currentPrompt || isLoading) && (
