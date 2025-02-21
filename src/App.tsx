@@ -111,6 +111,10 @@ function App() {
       paragraphs: session.paragraphs,
       currentPrompt: null,
     }));
+    setParagraphState((prev) => ({
+      ...prev,
+      currentSuggestion: undefined,
+    }))
     setIsSidebarOpen(false);
   };
 
