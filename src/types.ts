@@ -3,7 +3,6 @@ export interface WritingState {
   paragraphs: string[];
   currentPrompt: string | null;
   isLoading: boolean;
-  apiKey: string | null;
 }
 
 export interface SuggestionState {
@@ -16,11 +15,12 @@ export interface OpenAIResponse {
   nextPrompt: string;
 }
 
-export interface WritingSession {
+export interface StoryItem {
   id: string;
   date: string;
-  paragraphs: string[];
-  sentences: string[];
+  title: string;
+  context: string;
+  paragraph: string;
 }
 
 export interface Settings {

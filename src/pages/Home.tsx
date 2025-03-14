@@ -1,20 +1,13 @@
-import {
-  Check,
-  Edit2,
-  Loader,
-  MessageSquare,
-  Sparkles,
-  X as XIcon,
-} from "lucide-react";
+import { Check, Edit2, Loader, MessageSquare, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useBoolean, useLocalStorage } from "usehooks-ts";
+import { useBoolean } from "usehooks-ts";
 import { LicenseKeyInput } from "../components/LicenseKeyInput";
 import { SentenceList } from "../components/SentenceList";
 import { SettingsModal } from "../components/SettingsModal";
 import { Sidebar } from "../components/Sidebar";
 import { WritingPrompt } from "../components/WritingPrompt";
 import { useLicenseKey } from "../hooks/useLicenseKey";
-import type { SuggestionState, WritingSession, WritingState } from "../types";
+import type { StoryItem, SuggestionState, WritingState } from "../types";
 import { transformToNewLine } from "../utils/string";
 import {
   useCheckLicense,
@@ -27,6 +20,8 @@ import { Container } from "../layouts/container";
 import { HeaderTitle } from "../components/HeaderTitle";
 import { ConfirmModal } from "../components/ConfirmModal";
 import { ParagraphEditor } from "../components/ParagraphEditor";
+import { useStoryDb } from "../hooks/useStoryDb";
+import { ulid } from "ulid";
 
 function HomePage() {
   const {
@@ -60,11 +55,10 @@ function HomePage() {
   const getQuestion = useGetQuestion();
   const getShowDontTell = useGetShowing();
 
-  const [sessions, setSessions] = useLocalStorage<WritingSession[]>(
-    "writing_sessions",
-    [],
-  );
-  const [currentSession, setCurrentSession] = useState<string | null>(null);
+  const { getStories, getStory, updateStory } = useStoryDb();
+  const [storyList, setStoryList] = useState<StoryItem[]>([]);
+  const [selectedStoryId, setSelectedStoryId] = useState<string>("");
+
   const [editingParagraphIndex, setEditingParagraphIndex] = useState<
     number | null
   >(null);
@@ -74,27 +68,11 @@ function HomePage() {
     paragraphs: [],
     currentPrompt: null,
     isLoading: false,
-    apiKey: null,
   });
   const [paragraphState, setParagraphState] = useState<SuggestionState>({
     paragraphIndex: 0,
     isLoading: false,
   });
-
-  // useEffect(() => {
-  //   if (state.sentences.length > 0 || state.paragraphs.length > 0) {
-  //     const sessionId = currentSession ?? new Date().toISOString();
-  //     const updatedSessions = sessions.filter((s) => s.id !== sessionId);
-  //     updatedSessions.unshift({
-  //       id: sessionId,
-  //       date: sessionId,
-  //       paragraphs: state.paragraphs,
-  //       sentences: state.sentences,
-  //     });
-  //     setSessions(updatedSessions);
-  //     setCurrentSession(sessionId);
-  //   }
-  // }, [state.sentences, state.paragraphs]);
 
   const handleSentenceSubmit = async (sentence: string) => {
     setState((prev) => ({
@@ -135,13 +113,13 @@ function HomePage() {
   };
 
   const handleNewStory = () => {
-    setCurrentSession(null);
+    const newStoryId = ulid();
+    setSelectedStoryId(newStoryId);
     setState({
       sentences: [],
       paragraphs: [],
       currentPrompt: null,
       isLoading: false,
-      apiKey: null,
     });
     setParagraphState({
       paragraphIndex: 0,
@@ -150,12 +128,14 @@ function HomePage() {
     });
   };
 
-  const handleSessionSelect = (session: WritingSession) => {
-    setCurrentSession(session.id);
+  const handleSelectStory = async (story: StoryItem) => {
+    const selectedStory = await getStory(story.id);
+    if (!selectedStory) return;
+    setSelectedStoryId(selectedStory.id);
     setState((prev) => ({
       ...prev,
-      sentences: session.sentences,
-      paragraphs: session.paragraphs,
+      sentences: selectedStory.sentences,
+      paragraphs: selectedStory.paragraphs,
       currentPrompt: null,
     }));
     setParagraphState((prev) => ({
@@ -241,6 +221,71 @@ function HomePage() {
     if (hasLicenseKey) checkLicenseKey(licenseKey);
   }, [hasLicenseKey, licenseKey]);
 
+  useEffect(() => {
+    if (state.sentences.length > 0 || state.paragraphs.length > 0) {
+      const storyId = selectedStoryId ?? ulid();
+      const date = new Date().toISOString();
+      updateStory(storyId, {
+        id: storyId,
+        title: "",
+        context: "",
+        date,
+        paragraphs: state.paragraphs,
+        sentences: state.sentences,
+      });
+      setSelectedStoryId(storyId);
+      setStoryList((prev) => {
+        const storyIndex = prev.findIndex((story) => story.id === storyId);
+        if (storyIndex === -1) {
+          return [
+            {
+              id: storyId,
+              date,
+              title: "",
+              context: "",
+              paragraph: state.paragraphs?.[0] ?? state.sentences.join(" "),
+            },
+            ...prev,
+          ];
+        }
+
+        return prev.map((story) =>
+          story.id === storyId
+            ? {
+                ...story,
+                date,
+                paragraph: state.paragraphs?.[0] ?? state.sentences.join(" "),
+              }
+            : story,
+        );
+      });
+    }
+  }, [state.sentences, state.paragraphs]);
+
+  useEffect(() => {
+    getStories().then((stories) => {
+      const storyList = stories.map((story) => ({
+        id: story.id,
+        date: story.date,
+        title: story.title,
+        context: story.context,
+        paragraph: story.paragraphs?.[0] ?? story.sentences?.join(" "),
+      }));
+
+      setStoryList(storyList);
+      if (stories.length > 0) {
+        const latestStory = stories[0];
+        setSelectedStoryId(latestStory.id);
+        setState({
+          sentences: latestStory.sentences,
+          paragraphs: latestStory.paragraphs,
+          currentPrompt: null,
+          isLoading: false,
+        });
+      }
+    });
+  }, []);
+
   return (
     <DefaultLayout>
       <NavigationLeftMenus
@@ -257,12 +302,13 @@ function HomePage() {
         onLicenseKeyChange={handleCheckLicenseValidity}
       />
 
+      <>{console.log({ storyList })}</>
       <Sidebar
         isOpen={isSidebarOpen}
+        stories={storyList}
+        selectedStoryId={selectedStoryId}
         onClose={handleCloseSidebar}
-        sessions={sessions}
-        onSessionSelect={handleSessionSelect}
-        currentSessionId={currentSession}
+        onSelectStory={handleSelectStory}
       />
 
       <ConfirmModal

@@ -30,7 +30,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
           <div>
             <input
               type="password"
-              value={licenseKey || ""}
+              value={licenseKey ?? ""}
               onChange={(e) => onLicenseKeyChange(e.target.value)}
               className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
               placeholder="Enter your License Key"
