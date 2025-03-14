@@ -1,18 +1,18 @@
-import React from 'react';
-import { X } from 'lucide-react';
+import React from "react";
+import { X } from "lucide-react";
 
 interface SettingsModalProps {
   isOpen: boolean;
   onClose: () => void;
-  apiKey: string | null;
-  onApiKeyChange: (key: string) => void;
+  licenseKey: string | null;
+  onLicenseKeyChange: (key: string) => void;
 }
 
 export const SettingsModal: React.FC<SettingsModalProps> = ({
   isOpen,
   onClose,
-  apiKey,
-  onApiKeyChange,
+  licenseKey,
+  onLicenseKeyChange,
 }) => {
   if (!isOpen) return null;
 
@@ -28,15 +28,12 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
         <h2 className="text-2xl font-bold mb-4">Settings</h2>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-2">
-              OpenAI API Key
-            </label>
             <input
               type="password"
-              value={apiKey || ''}
-              onChange={(e) => onApiKeyChange(e.target.value)}
+              value={licenseKey || ""}
+              onChange={(e) => onLicenseKeyChange(e.target.value)}
               className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-lg text-white"
-              placeholder="Enter your OpenAI API key"
+              placeholder="Enter your License Key"
             />
           </div>
         </div>
