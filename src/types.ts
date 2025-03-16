@@ -1,4 +1,5 @@
 export interface WritingState {
+  date: string;
   sentences: string[];
   paragraphs: string[];
   currentPrompt: string | null;

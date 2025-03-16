@@ -22,6 +22,7 @@ import { ConfirmModal } from "../components/ConfirmModal";
 import { ParagraphEditor } from "../components/ParagraphEditor";
 import { useStoryDb } from "../hooks/useStoryDb";
 import { ulid } from "ulid";
+import { NavigationRightMenus } from "../components/NavigationRightMenus";
 
 function HomePage() {
   const {
@@ -64,6 +65,7 @@ function HomePage() {
   >(null);
   const [editingParagraphText, setEditingParagraphText] = useState("");
   const [state, setState] = useState<WritingState>({
+    date: new Date().toISOString(),
     sentences: [],
     paragraphs: [],
     currentPrompt: null,
@@ -116,6 +118,7 @@ function HomePage() {
     const newStoryId = ulid();
     setSelectedStoryId(newStoryId);
     setState({
+      date: new Date().toISOString(),
       sentences: [],
       paragraphs: [],
       currentPrompt: null,
@@ -229,7 +232,7 @@ function HomePage() {
         id: storyId,
         title: "",
         context: "",
-        date,
+        date: state.date,
         paragraphs: state.paragraphs,
         sentences: state.sentences,
       });
@@ -277,6 +280,7 @@ function HomePage() {
         const latestStory = stories[0];
         setSelectedStoryId(latestStory.id);
         setState({
+          date: latestStory.date,
           sentences: latestStory.sentences,
           paragraphs: latestStory.paragraphs,
           currentPrompt: null,
@@ -291,9 +295,10 @@ function HomePage() {
       <NavigationLeftMenus
         onOpenSetting={handleOpenSetttings}
         onOpenSidebar={handleOpenSidebar}
-        onNewStoryClick={handleNewStory}
-        isNewStoryEnabled={hasLicenseKey}
+        onNewClick={handleNewStory}
+        isNewMenuEnabled={hasLicenseKey}
       />
+      <NavigationRightMenus />
 
       <SettingsModal
         isOpen={isSettingsOpen}

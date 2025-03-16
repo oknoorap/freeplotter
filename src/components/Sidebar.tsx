@@ -13,6 +13,25 @@ interface SidebarProps {
   selectedStoryId?: string;
 }
 
+const sortStoriesByDate = (stories: StoryItem[]) => {
+  stories.sort(
+    (a, z) => new Date(z.date).getTime() - new Date(a.date).getTime(),
+  );
+  return stories;
+};
+
+const sortStoriesBySelected = (
+  selectedStoryId?: string,
+  stories: StoryItem[] = [],
+) => {
+  stories.sort((a, z) => {
+    if (a.id === selectedStoryId) return -1;
+    if (z.id === selectedStoryId) return 1;
+    return 0;
+  });
+  return stories;
+};
+
 export const Sidebar: React.FC<SidebarProps> = ({
   isOpen,
   stories,
@@ -45,7 +64,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         </div>
         <div className="p-4 space-y-4 overflow-y-auto h-[calc(100vh-64px)]">
-          {stories.map((story) => {
+          {sortStoriesBySelected(
+            selectedStoryId,
+            sortStoriesByDate(stories),
+          ).map((story) => {
             const isSelected = story.id === selectedStoryId;
             return (
               <button

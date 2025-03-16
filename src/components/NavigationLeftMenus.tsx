@@ -2,17 +2,21 @@ import type { FC } from "react";
 import { Menu, PlusCircle, Settings } from "lucide-react";
 
 export interface NavigationLeftMenusProps {
+  isSidebarMenuVisible?: boolean;
+  isNewMenuEnabled?: boolean;
+  newLabel?: string;
   onOpenSetting?: () => void;
   onOpenSidebar?: () => void;
-  onNewStoryClick?: () => void;
-  isNewStoryEnabled?: boolean;
+  onNewClick?: () => void;
 }
 
 export const NavigationLeftMenus: FC<NavigationLeftMenusProps> = ({
+  isSidebarMenuVisible = true,
+  isNewMenuEnabled,
+  newLabel = "Start New Story",
   onOpenSetting,
   onOpenSidebar,
-  onNewStoryClick,
-  isNewStoryEnabled,
+  onNewClick,
 }) => (
   <div className="fixed top-4 left-4 flex space-x-2 z-50">
     <button
@@ -22,18 +26,20 @@ export const NavigationLeftMenus: FC<NavigationLeftMenusProps> = ({
     >
       <Settings size={24} className="text-gray-400" />
     </button>
+    {isSidebarMenuVisible && (
+      <button
+        onClick={onOpenSidebar}
+        className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
+        title="Story History"
+      >
+        <Menu size={24} className="text-gray-400" />
+      </button>
+    )}
     <button
-      onClick={onOpenSidebar}
-      className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
-      title="Story History"
-    >
-      <Menu size={24} className="text-gray-400" />
-    </button>
-    <button
-      onClick={onNewStoryClick}
-      disabled={!isNewStoryEnabled}
+      onClick={onNewClick}
+      disabled={!isNewMenuEnabled}
       className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors disabled:opacity-35"
-      title="Start New Story"
+      title={newLabel}
     >
       <PlusCircle size={24} className="text-gray-400" />
     </button>

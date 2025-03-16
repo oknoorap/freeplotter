@@ -62,11 +62,63 @@ export const useGetShowing = () => {
   return mutation;
 };
 
+export type UseGenerateOutlineMutation = {
+  title: string;
+  summary?: string;
+  genre: string;
+  numChapters: number;
+  plots: string[];
+};
+
+type GenerateOutlineMutationResponse = {
+  premise: string;
+  outline: Array<{
+    title: string;
+    content: string;
+  }>;
+};
+
+export const useGenerateOutline = () => {
+  const [isLoading, setLoading] = useState(false);
+  const controller = new AbortController();
+  const mutation = useMutation<
+    GenerateOutlineMutationResponse,
+    Error,
+    UseGenerateOutlineMutation
+  >({
+    mutationKey: ["outline"],
+    mutationFn: async (payload) => {
+      try {
+        setLoading(true);
+        const response = await mutator<UseGenerateOutlineMutation>(
+          "/outline/generate",
+          payload,
+          controller.signal,
+        );
+        return response;
+      } finally {
+        setLoading(false);
+      }
+    },
+  });
+
+  useEffect(() => {
+    return () => controller.abort();
+  }, []);
+
+  return {
+    isLoading,
+    ...mutation,
+  };
+};
+
 export const useCheckLicense = ({ onInvalid }: { onInvalid?: () => void }) => {
   const { setLicenseKey } = useLicenseKey();
   const [key, setKey] = useState("");
 
-  const checkLicenseKey = async (key: string) => setKey(key);
+  const checkLicenseKey = async (key: string) => {
+    setKey(key);
+  };
 
   const clearEnteredLicenseKey = () => {
     setKey("");
@@ -96,6 +148,11 @@ export const useCheckLicense = ({ onInvalid }: { onInvalid?: () => void }) => {
       return response;
     },
   });
+
+  useEffect(() => {
+    const hasKey = !!key?.length;
+    if (hasKey) query.refetch();
+  }, [key]);
 
   useEffect(() => {
     return () => controller.abort();
