@@ -20,7 +20,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onSelectStory,
   onClose,
 }) => {
-  console.log("sidebar stories", stories);
   return (
     <>
       <div

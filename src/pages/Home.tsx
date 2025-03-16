@@ -302,7 +302,6 @@ function HomePage() {
         onLicenseKeyChange={handleCheckLicenseValidity}
       />
 
-      <>{console.log({ storyList })}</>
       <Sidebar
         isOpen={isSidebarOpen}
         stories={storyList}
