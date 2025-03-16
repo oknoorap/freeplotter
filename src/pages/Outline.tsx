@@ -8,6 +8,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
+import cx from "clsx";
 import {
   arrayMove,
   SortableContext,
@@ -244,7 +245,12 @@ function OutlinePage() {
           />
         ) : (
           <div className="flex flex-col gap-8">
-            <fieldset className="flex flex-col gap-2">
+            <fieldset
+              className={cx(
+                "flex flex-col gap-2",
+                isGenerating && "opacity-35",
+              )}
+            >
               <label className="block text-lg font-semibold" htmlFor="title">
                 Title
               </label>
@@ -259,7 +265,12 @@ function OutlinePage() {
               />
             </fieldset>
 
-            <fieldset className="flex flex-col gap-2">
+            <fieldset
+              className={cx(
+                "flex flex-col gap-2",
+                isGenerating && "opacity-35",
+              )}
+            >
               <label className="block text-lg font-semibold" htmlFor="summary">
                 Summary
               </label>
@@ -270,7 +281,12 @@ function OutlinePage() {
               />
             </fieldset>
 
-            <fieldset className="flex flex-col gap-2">
+            <fieldset
+              className={cx(
+                "flex flex-col gap-2",
+                isGenerating && "opacity-35",
+              )}
+            >
               <label className="block text-lg font-semibold" htmlFor="genre">
                 Genre
               </label>
@@ -281,7 +297,12 @@ function OutlinePage() {
               />
             </fieldset>
 
-            <fieldset className="flex flex-col gap-2">
+            <fieldset
+              className={cx(
+                "flex flex-col gap-2",
+                isGenerating && "opacity-35",
+              )}
+            >
               <label className="block text-lg font-semibold" htmlFor="chapters">
                 Num. of Chapters
               </label>
@@ -303,7 +324,12 @@ function OutlinePage() {
               </div>
             </fieldset>
 
-            <fieldset className="flex flex-col gap-2">
+            <fieldset
+              className={cx(
+                "flex flex-col gap-2",
+                isGenerating && "opacity-35",
+              )}
+            >
               <label className="block text-lg font-semibold" htmlFor="plot">
                 Plots (Max {PLOT_LIMIT})
               </label>
@@ -342,14 +368,14 @@ function OutlinePage() {
             </fieldset>
 
             <button
-              className="flex items-center justify-center font-bold gap-2 w-full py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer"
+              className="flex items-center justify-center font-bold gap-2 w-full py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer disabled:opacity-45"
               onClick={handleGenerateOutline}
               disabled={isCheckingLicenseKey}
             >
               {isGenerating ? (
                 <>
                   <Loader className="animate-spin" />
-                  <span>Loading, generating a PDF file...</span>
+                  <span>Processing, generating PDF file...</span>
                 </>
               ) : (
                 "Generate!"
