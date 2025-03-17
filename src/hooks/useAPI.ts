@@ -222,6 +222,10 @@ export const useCheckLicense = ({ onInvalid }: { onInvalid?: () => void }) => {
         controller.signal,
       );
 
+      if (response?.error) {
+        throw Error(response?.message + ": " + response?.cause);
+      }
+
       if (response?.isValid) {
         setLicenseKey(key);
       } else {
