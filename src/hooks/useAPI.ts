@@ -164,7 +164,7 @@ export const useNewOrder = () => {
     Error,
     NewOrderMutation["Request"]
   >({
-    mutationKey: ["outline"],
+    mutationKey: ["order"],
     mutationFn: async (payload) => {
       try {
         setIsLoading(true);

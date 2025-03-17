@@ -30,7 +30,7 @@ export const mutator = async <T>(
   signal?: AbortSignal | null,
   multipart = false,
 ) => {
-  const licenseKey = localStorage.getItem("licenseKey") ?? "";
+  const licenseKey = localStorage.getItem("licenseKey") ?? "null";
   const url = new URL(pathname, API_URL);
   const [result] = await Promise.allSettled([
     fetch(url.toString(), {

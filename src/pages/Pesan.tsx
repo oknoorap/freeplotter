@@ -97,6 +97,7 @@ const getPriceAndDiscount = (licenseType: number, expDuration: number) => {
 };
 
 function PesanPage() {
+  const formRef = useRef<HTMLFormElement>(null);
   const uploadRef = useRef<HTMLInputElement>(null);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -142,7 +143,12 @@ function PesanPage() {
     setUploadedImage(blobUrl);
   };
 
-  const handleRemoveUploadedImage = () => setUploadedImage(null);
+  const handleRemoveUploadedImage = () => {
+    if (uploadRef?.current) {
+      uploadRef.current.setAttribute("key", "");
+    }
+    setUploadedImage(null);
+  };
 
   const newOrder = useNewOrder();
   const isSubmitting = newOrder.isLoading;
@@ -185,6 +191,7 @@ function PesanPage() {
     setActiveLicenseType(1);
     setLastOrder(null);
     setExpDuration(1);
+    formRef?.current?.reset();
   };
 
   return (
@@ -197,6 +204,7 @@ function PesanPage() {
         />
 
         <form
+          ref={formRef}
           className="flex flex-col gap-6"
           onSubmit={handleSubmit}
           encType="multipart/form-data"
