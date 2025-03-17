@@ -167,6 +167,7 @@ function PesanPage() {
       const lastOrder = await newOrder.mutateAsync(payload);
       setLastOrder(lastOrder);
     } catch (error) {
+      console.error(error);
       alert(
         `An error occurred, contact support with this message: \`${
           (error as Error).message
@@ -203,7 +204,7 @@ function PesanPage() {
           <fieldset
             className={cx(
               "flex flex-col gap-2",
-              isInputDisabled && "opacity-35 cursor-default",
+              isInputDisabled && "opacity-35 cursor-default select-none",
             )}
           >
             <label className="block text-lg font-semibold" htmlFor="name">
@@ -226,7 +227,7 @@ function PesanPage() {
           <fieldset
             className={cx(
               "flex flex-col gap-2",
-              isInputDisabled && "opacity-35 cursor-default",
+              isInputDisabled && "opacity-35 cursor-default select-none",
             )}
           >
             <label className="block text-lg font-semibold" htmlFor="email">
@@ -250,7 +251,7 @@ function PesanPage() {
           <fieldset
             className={cx(
               "flex flex-col gap-2",
-              isInputDisabled && "opacity-35 cursor-default",
+              isInputDisabled && "opacity-35 cursor-default select-none",
             )}
           >
             <label className="block text-lg font-semibold" htmlFor="phone">
@@ -272,7 +273,7 @@ function PesanPage() {
           <fieldset
             className={cx(
               "flex flex-col gap-2 mb-2",
-              isInputDisabled && "opacity-35 cursor-default",
+              isInputDisabled && "opacity-35 cursor-default select-none",
             )}
           >
             <label className="block text-lg font-semibold" htmlFor="phone">
@@ -296,7 +297,7 @@ function PesanPage() {
           <fieldset
             className={cx(
               "flex flex-col gap-2",
-              isInputDisabled && "opacity-35 cursor-default",
+              isInputDisabled && "opacity-35 cursor-default select-none",
             )}
           >
             <label htmlFor="" className="block text-lg font-semibold">
@@ -380,7 +381,7 @@ function PesanPage() {
           <fieldset
             className={cx(
               "flex flex-col gap-3 mt-8",
-              isInputDisabled && "opacity-35 cursor-default",
+              isInputDisabled && "opacity-35 cursor-default select-none",
             )}
           >
             <label className="block text-2xl font-semibold" htmlFor="">
@@ -400,7 +401,7 @@ function PesanPage() {
                 <div>a.n Ribhararnus Pracutian</div>
               </div>
             </div>
-            <p className="text-lg">3. Unggah Bukti Transfer:</p>
+            <p className="text-lg">3. Unggah bukti transfer:</p>
             <div className="flex flex-col">
               <div
                 aria-hidden
@@ -445,21 +446,31 @@ function PesanPage() {
             </div>
           </fieldset>
 
-          <button
-            className="bg-blue-600 hover:bg-blue-500 active:bg-blue-700 p-4 rounded-xl text-xl font-bold disabled:opacity-35 cursor:pointer"
-            disabled={isInputDisabled}
-          >
-            Konfirmasi &amp; Aktivasi <sup>*</sup>
-          </button>
+          {!hasOrder && (
+            <button
+              className="bg-blue-600 hover:bg-blue-500 active:bg-blue-700 p-4 rounded-xl text-xl font-bold disabled:opacity-35 cursor:pointer"
+              disabled={isInputDisabled}
+            >
+              Konfirmasi &amp; Aktivasi <sup>*</sup>
+            </button>
+          )}
 
           {hasOrder && (
-            <button
-              type="button"
-              className="bg-blue-600 hover:bg-blue-500 active:bg-blue-700 p-4 rounded-xl text-xl font-bold cursor:pointer"
-              onClick={handleResetOrder}
-            >
-              Beli Lagi
-            </button>
+            <div className="flex flex-col gap-2">
+              <p className="text-green-500 text-center">
+                Selamat, konfirmasi pesanan Anda sudah masuk database kami.
+                <br />
+                Kami akan mengaktivasi <strong>License Key</strong> Anda
+                secepatnya!
+              </p>
+              <button
+                type="button"
+                className="bg-blue-600 hover:bg-blue-500 active:bg-blue-700 p-4 rounded-xl text-xl font-bold cursor:pointer"
+                onClick={handleResetOrder}
+              >
+                Beli Lagi
+              </button>
+            </div>
           )}
 
           <p className="text-xl text-center text-gray-500">
