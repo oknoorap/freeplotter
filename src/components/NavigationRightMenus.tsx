@@ -11,7 +11,7 @@ export const NavigationRightMenus: FC = () => (
       <BookOpenText size={24} className="text-gray-400" />
     </a>
     <a
-      href="/outline.html"
+      href="/outline"
       className="p-2 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
       title="Outline Generator"
     >

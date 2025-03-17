@@ -8,13 +8,14 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
-import cx from "clsx";
 import {
   arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
+import { pdf } from "@react-pdf/renderer";
+import cx from "clsx";
 import { Loader } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
 import { ulid } from "ulid";
@@ -34,7 +35,6 @@ import { useCheckLicense, useGenerateOutline } from "../hooks/useAPI";
 import { useLicenseKey } from "../hooks/useLicenseKey";
 import { Container } from "../layouts/container";
 import { DefaultLayout } from "../layouts/default";
-import { pdf } from "@react-pdf/renderer";
 
 const PLOT_LIMIT = 50;
 
@@ -255,13 +255,15 @@ function OutlinePage() {
                 Title
               </label>
               <input
+                autoFocus
+                required
                 value={title}
                 maxLength={200}
                 onChange={(e) => setTitle(e.target.value)}
                 disabled={isGenerating}
                 type="text"
                 id="title"
-                className="text-lg w-full p-4 bg-gray-800/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-transparent border border-gray-700 focus:ring-2 focus:ring-blue-500"
+                className="text-lg w-full p-4 bg-gray-800/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-transparent border border-gray-700 ring-2 focus:ring-blue-500 required:ring-red-500"
               />
             </fieldset>
 
@@ -368,6 +370,7 @@ function OutlinePage() {
             </fieldset>
 
             <button
+              type="submit"
               className="flex items-center justify-center font-bold gap-2 w-full py-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer disabled:opacity-45"
               onClick={handleGenerateOutline}
               disabled={isCheckingLicenseKey}
@@ -378,7 +381,7 @@ function OutlinePage() {
                   <span>Processing, generating PDF file...</span>
                 </>
               ) : (
-                "Generate!"
+                "Generate Outline!"
               )}
             </button>
           </div>

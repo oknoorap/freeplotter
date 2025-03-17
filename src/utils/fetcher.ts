@@ -28,6 +28,7 @@ export const mutator = async <T>(
   pathname: string,
   payload: T,
   signal?: AbortSignal | null,
+  multipart = false,
 ) => {
   const licenseKey = localStorage.getItem("licenseKey") ?? "";
   const url = new URL(pathname, API_URL);
@@ -35,7 +36,7 @@ export const mutator = async <T>(
     fetch(url.toString(), {
       signal,
       method: "POST",
-      body: JSON.stringify(payload),
+      body: multipart ? (payload as FormData) : JSON.stringify(payload),
       headers: {
         "X-License-Key": JSON.parse(licenseKey),
       },

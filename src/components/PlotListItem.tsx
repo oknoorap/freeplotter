@@ -74,7 +74,6 @@ export const PlotListItem: FC<PlotListItemProps> = ({
       <div className="flex gap-4 items-center flex-1">
         <input
           ref={inputRef}
-          autoFocus
           className="flex-1 bg-transparent border-none outline-none text-lg placeholder:opacity-45 w-full"
           placeholder={`Add new plot [press \u23CE]`}
           value={plot.context}

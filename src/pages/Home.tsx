@@ -1,28 +1,28 @@
 import { Check, Edit2, Loader, MessageSquare, Sparkles } from "lucide-react";
 import { useEffect, useState } from "react";
+import { ulid } from "ulid";
 import { useBoolean } from "usehooks-ts";
+import { ConfirmModal } from "../components/ConfirmModal";
+import { HeaderTitle } from "../components/HeaderTitle";
 import { LicenseKeyInput } from "../components/LicenseKeyInput";
+import { NavigationLeftMenus } from "../components/NavigationLeftMenus";
+import { NavigationRightMenus } from "../components/NavigationRightMenus";
+import { ParagraphEditor } from "../components/ParagraphEditor";
 import { SentenceList } from "../components/SentenceList";
 import { SettingsModal } from "../components/SettingsModal";
 import { Sidebar } from "../components/Sidebar";
 import { WritingPrompt } from "../components/WritingPrompt";
-import { useLicenseKey } from "../hooks/useLicenseKey";
-import type { StoryItem, SuggestionState, WritingState } from "../types";
-import { transformToNewLine } from "../utils/string";
 import {
   useCheckLicense,
   useGetQuestion,
   useGetShowing,
 } from "../hooks/useAPI";
-import { DefaultLayout } from "../layouts/default";
-import { NavigationLeftMenus } from "../components/NavigationLeftMenus";
-import { Container } from "../layouts/container";
-import { HeaderTitle } from "../components/HeaderTitle";
-import { ConfirmModal } from "../components/ConfirmModal";
-import { ParagraphEditor } from "../components/ParagraphEditor";
+import { useLicenseKey } from "../hooks/useLicenseKey";
 import { useStoryDb } from "../hooks/useStoryDb";
-import { ulid } from "ulid";
-import { NavigationRightMenus } from "../components/NavigationRightMenus";
+import { Container } from "../layouts/container";
+import { DefaultLayout } from "../layouts/default";
+import type { StoryItem, SuggestionState, WritingState } from "../types";
+import { transformToNewLine } from "../utils/string";
 
 function HomePage() {
   const {
