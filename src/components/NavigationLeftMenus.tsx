@@ -13,7 +13,7 @@ export interface NavigationLeftMenusProps {
 export const NavigationLeftMenus: FC<NavigationLeftMenusProps> = ({
   isSidebarMenuVisible = true,
   isNewMenuEnabled,
-  newLabel = "Start New Story",
+  newLabel = "Start New Chapter / Story",
   onOpenSetting,
   onOpenSidebar,
   onNewClick,

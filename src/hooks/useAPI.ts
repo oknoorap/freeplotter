@@ -29,7 +29,9 @@ export const useGetQuestion = () => {
         controller.signal,
       );
       if (response?.error) {
-        throw Error(response?.message + ": " + response?.cause);
+        throw new Error(response?.message, {
+          cause: response?.cause,
+        });
       }
       return response;
     },
@@ -67,7 +69,9 @@ export const useGetShowing = () => {
         controller.signal,
       );
       if (response?.error) {
-        throw Error(response?.message + ": " + response?.cause);
+        throw new Error(response?.message, {
+          cause: response?.cause,
+        });
       }
       return response;
     },
@@ -78,6 +82,53 @@ export const useGetShowing = () => {
   }, []);
 
   return mutation;
+};
+
+type CreateNewStoryMutation = {
+  Request: { isParagraph?: boolean } | void;
+  Response: {
+    ok: boolean;
+  };
+};
+
+export const useCreateNewStory = () => {
+  const [isLoading, setIsLoading] = useState(false);
+  const controller = new AbortController();
+  const mutation = useMutation<
+    CreateNewStoryMutation["Response"],
+    Error,
+    CreateNewStoryMutation["Request"]
+  >({
+    mutationKey: ["outline"],
+    mutationFn: async (payload) => {
+      try {
+        setIsLoading(true);
+        const response = await mutator<CreateNewStoryMutation["Request"]>(
+          "/story/create" +
+            (payload && payload?.isParagraph ? "?paragraph=1" : ""),
+          {},
+          controller.signal,
+        );
+        if (response?.error) {
+          throw new Error(response?.message, {
+            cause: response?.cause,
+          });
+        }
+        return response;
+      } finally {
+        setIsLoading(false);
+      }
+    },
+  });
+
+  useEffect(() => {
+    return () => controller.abort();
+  }, []);
+
+  return {
+    isLoading,
+    ...mutation,
+  };
 };
 
 type GenerateOutlineMutation = {

@@ -89,7 +89,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   )}
                 </div>
                 <p className="text-sm text-gray-200 line-clamp-2">
-                  {story.paragraph}
+                  {story.paragraph || "..."}
                 </p>
               </button>
             );

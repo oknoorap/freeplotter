@@ -14,6 +14,7 @@ import { Sidebar } from "../components/Sidebar";
 import { WritingPrompt } from "../components/WritingPrompt";
 import {
   useCheckLicense,
+  useCreateNewStory,
   useGetQuestion,
   useGetShowing,
 } from "../hooks/useAPI";
@@ -41,6 +42,18 @@ function HomePage() {
     value: isInvalidLicenseModalOpen,
     setTrue: handleOpenInvalidLicenseModal,
     setFalse: handleCloseInvalidLicenseModal,
+  } = useBoolean();
+
+  const {
+    value: isErrorModalOpen,
+    setTrue: handleOpenErrorModal,
+    setFalse: handleCloseErrorModal,
+  } = useBoolean();
+
+  const {
+    value: isNewStoryWarningModalOpen,
+    setTrue: handleOpenNewStoryWarningModal,
+    setFalse: handleCloseNewStoryWarningModal,
   } = useBoolean();
 
   const { licenseKey, hasLicenseKey } = useLicenseKey();
@@ -97,24 +110,40 @@ function HomePage() {
         isLoading: false,
       }));
     } catch (error) {
-      console.error("Error generating prompt:", error);
+      const _error = error as Error & { cause: string };
+      dispatchErrorModal(_error?.cause ?? _error.message ?? "Unknown error");
       setState((prev) => ({ ...prev, isLoading: false }));
     }
   };
 
+  const createNewStory = useCreateNewStory();
+
   const handleNewParagraph = async () => {
     if (state.sentences.length === 0) return;
-    const newParagraph = state.sentences.join(" ");
-    const paragraphs = [...state.paragraphs, newParagraph];
-    setState((prev) => ({
-      ...prev,
-      paragraphs,
-      sentences: [],
-      isLoading: false,
-    }));
+
+    try {
+      await createNewStory.mutateAsync({ isParagraph: true });
+      const newParagraph = state.sentences.join(" ");
+      const paragraphs = [...state.paragraphs, newParagraph];
+      setState((prev) => ({
+        ...prev,
+        paragraphs,
+        sentences: [],
+        isLoading: false,
+      }));
+    } catch (error) {
+      const _error = error as Error & { cause: string };
+      dispatchErrorModal(_error?.cause ?? _error.message ?? "Unknown error");
+    }
   };
 
-  const handleNewStory = () => {
+  const [errorMessage, setErrorMessage] = useState("");
+  const dispatchErrorModal = (errorMessage?: string) => {
+    setErrorMessage(errorMessage ?? "Unknown error, please contact support.");
+    handleOpenErrorModal();
+  };
+
+  const handleResetNewStoryState = () => {
     const newStoryId = ulid();
     setSelectedStoryId(newStoryId);
     setState({
@@ -129,6 +158,31 @@ function HomePage() {
       isLoading: false,
       currentSuggestion: undefined,
     });
+    handleCloseNewStoryWarningModal();
+  };
+
+  const handleConsumeNewStoryQuota = async () => {
+    try {
+      await createNewStory.mutateAsync();
+      handleResetNewStoryState();
+      const storyId = ulid();
+      updateStory(storyId, {
+        id: storyId,
+        title: "",
+        context: "",
+        date: new Date().toISOString(),
+        paragraphs: [],
+        sentences: [],
+      });
+    } catch (error) {
+      const _error = error as Error & { cause: string };
+      dispatchErrorModal(_error?.cause ?? _error.message ?? "Unknown error");
+    }
+  };
+
+  const handleNewStory = async () => {
+    if (state.paragraphs.length > 0) return handleOpenNewStoryWarningModal();
+    handleResetNewStoryState();
   };
 
   const handleSelectStory = async (story: StoryItem) => {
@@ -173,7 +227,8 @@ function HomePage() {
         isLoading: false,
       }));
     } catch (error) {
-      console.error("Error generating prompt:", error);
+      const _error = error as Error & { cause: string };
+      dispatchErrorModal(_error?.cause ?? _error.message ?? "Unknown error");
       setParagraphState((prev) => ({ ...prev, isLoading: false }));
     }
   };
@@ -211,7 +266,9 @@ function HomePage() {
     try {
       await checkLicenseKey(licenseKey);
     } catch (error) {
-      console.error("Error checking license key:", error);
+      const _error = error as Error & { cause: string };
+      dispatchErrorModal(_error?.cause ?? _error.message ?? "Unknown error");
+      // console.error("Error checking license key:", error);
     }
   };
 
@@ -316,13 +373,51 @@ function HomePage() {
       />
 
       <ConfirmModal
+        title="An error occurred"
+        isOpen={isErrorModalOpen}
+        onClose={handleCloseErrorModal}
+      >
+        <p className="leading-relaxed text-red-500">{errorMessage}</p>
+        <button className="mx-auto w-full" onClick={handleCloseErrorModal}>
+          OK
+        </button>
+      </ConfirmModal>
+
+      <ConfirmModal
+        title="New chapter / story creation"
+        isOpen={isNewStoryWarningModalOpen}
+        onClose={handleCloseNewStoryWarningModal}
+      >
+        <p className="leading-relaxed">
+          Creating a new story or chapter will consume your creation quota for
+          this month.
+        </p>
+
+        <div className="flex sm:flex-col md:flex-row md:items-center gap-3 [&>_button]:rounded">
+          <button
+            disabled={createNewStory.isLoading}
+            className="flex-1 bg-blue-500 py-1 px-2 disabled:opacity-50"
+            onClick={handleConsumeNewStoryQuota}
+          >
+            I Agree
+          </button>
+          <button
+            className="flex-1 bg-gray-700 py-1 px-2"
+            onClick={handleCloseNewStoryWarningModal}
+          >
+            Cancel
+          </button>
+        </div>
+      </ConfirmModal>
+
+      <ConfirmModal
         title="Invalid License Key"
         isOpen={isInvalidLicenseModalOpen}
         onClose={handleCloseInvalidLicenseKeyModal}
       >
         <p className="leading-relaxed">
-          It's expired or invalid. Please enter a valid License Key to continue
-          using Freeplotter.
+          It has expired or is invalid. Please enter a valid license key to
+          continue using Freeplotter.
         </p>
         <button
           className="mx-auto w-full"
