@@ -20,7 +20,7 @@ const licenseTypes: Array<{
 }> = [
   {
     licenseType: 1,
-    maxStory: 12,
+    maxStory: 20,
     maxParagraph: 20,
     maxOutlineGeneration: 12,
     label: "Standard",
