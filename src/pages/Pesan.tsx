@@ -21,7 +21,7 @@ const licenseTypes: Array<{
   {
     licenseType: 1,
     maxStory: 20,
-    maxParagraph: 20,
+    maxParagraph: 50,
     maxOutlineGeneration: 12,
     label: "Standard",
     basePrice: 35000,
@@ -37,7 +37,7 @@ const licenseTypes: Array<{
   {
     licenseType: 2,
     maxStory: 35,
-    maxParagraph: 25,
+    maxParagraph: 75,
     maxOutlineGeneration: 30,
     label: "Premium",
     basePrice: 50000,
