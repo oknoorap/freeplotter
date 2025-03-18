@@ -171,9 +171,7 @@ function OutlinePage() {
       const blobUrl = URL.createObjectURL(blob);
       window.open(blobUrl, "_blank");
     } catch (error) {
-      alert(
-        `An error occurred: ${(error as Error)?.message ?? "Unknown Error"}`,
-      );
+      alert((error as Error)?.message ?? "Unknown Error");
     }
   };
 
@@ -263,7 +261,7 @@ function OutlinePage() {
                 disabled={isGenerating}
                 type="text"
                 id="title"
-                className="text-lg w-full p-4 bg-gray-800/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-transparent border border-gray-700 ring-2 focus:ring-blue-500 required:ring-red-500"
+                className="text-lg w-full p-4 bg-gray-800/50 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-transparent border border-gray-700 ring-2 focus:ring-blue-500 invalid:ring-red-500"
               />
             </fieldset>
 
