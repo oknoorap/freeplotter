@@ -255,6 +255,7 @@ function HomePage() {
 
     setEditingParagraphIndex(null);
     setEditingParagraphText("");
+    if (paragraphState.currentSuggestion) handleDismissSuggestion();
   };
 
   const handleCancelEdit = () => {
