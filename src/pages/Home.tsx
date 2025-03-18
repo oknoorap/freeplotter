@@ -399,7 +399,7 @@ function HomePage() {
             className="flex-1 bg-blue-500 py-1 px-2 disabled:opacity-50"
             onClick={handleConsumeNewStoryQuota}
           >
-            I Agree
+            {createNewStory.isLoading ? "Creating..." : "I Agree"}
           </button>
           <button
             className="flex-1 bg-gray-700 py-1 px-2"
