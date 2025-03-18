@@ -464,8 +464,8 @@ function PesanPage() {
           )}
 
           {hasOrder && (
-            <div className="flex flex-col gap-2">
-              <p className="text-green-500 text-center">
+            <div className="flex flex-col gap-3">
+              <p className="text-green-500 text-center text-lg">
                 Selamat, konfirmasi pesanan Anda sudah masuk database kami.
                 <br />
                 Kami akan mengaktivasi <strong>License Key</strong> Anda
@@ -481,7 +481,7 @@ function PesanPage() {
             </div>
           )}
 
-          <p className="text-xl text-center text-gray-500">
+          <p className="text-sm text-center text-gray-500">
             * Karena banyaknya pesanan yang masuk, License Key akan otomatis
             dikirimkan ke email Anda dan akan teraktivasi paling lambat 1 jam
             setelah Anda melakukan konfirmasi melalui halaman ini. Kami akan
