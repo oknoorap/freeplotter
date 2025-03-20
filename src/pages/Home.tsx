@@ -31,6 +31,7 @@ import { Container } from "../layouts/container";
 import { DefaultLayout } from "../layouts/default";
 import type { StoryItem, SuggestionState, WritingState } from "../types";
 import { transformToNewLine } from "../utils/string";
+import { markedToHTML } from "../utils/markdown";
 
 function HomePage() {
   const {
@@ -529,7 +530,9 @@ function HomePage() {
                                 className="text-green-400 select-none pointer-events-none"
                                 dangerouslySetInnerHTML={{
                                   __html: transformToNewLine(
-                                    paragraphState.currentSuggestion,
+                                    markedToHTML(
+                                      paragraphState.currentSuggestion,
+                                    ),
                                   ),
                                 }}
                               />

@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { StyleSheet, Document, Page, Text, View } from "@react-pdf/renderer";
+import { markedToHTML } from "../utils/markdown";
 
 const styles = StyleSheet.create({
   body: {
@@ -108,10 +109,10 @@ export const OutlineDocument: FC<OutlineDocumentProps> = ({
             return (
               <View key={item.title} style={styles.outline}>
                 <Text key={item.title} style={styles.outlineTitle}>
-                  {item.title}
+                  {markedToHTML(item.title)}
                 </Text>
                 <Text key={item.title} style={styles.outlineContent}>
-                  {item.content}
+                  {markedToHTML(item.content)}
                 </Text>
               </View>
             );

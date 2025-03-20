@@ -35,6 +35,7 @@ import { useCheckLicense, useGenerateOutline } from "../hooks/useAPI";
 import { useLicenseKey } from "../hooks/useLicenseKey";
 import { Container } from "../layouts/container";
 import { DefaultLayout } from "../layouts/default";
+import { markedToHTML } from "../utils/markdown";
 
 const PLOT_LIMIT = 50;
 
@@ -164,7 +165,7 @@ function OutlinePage() {
         <OutlineDocument
           title={title}
           summary={summary}
-          premise={premise}
+          premise={markedToHTML(premise)}
           outline={outline}
         />,
       ).toBlob();

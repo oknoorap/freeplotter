@@ -1,6 +1,7 @@
-import React from 'react';
-import { MessageSquare, Loader } from 'lucide-react';
-import { transformToNewLine } from '../utils/string';
+import React from "react";
+import { MessageSquare, Loader } from "lucide-react";
+import { transformToNewLine } from "../utils/string";
+import { markedToHTML } from "../utils/markdown";
 
 interface SentenceListProps {
   sentences: string[];
@@ -8,10 +9,10 @@ interface SentenceListProps {
   isLoading: boolean;
 }
 
-export const SentenceList: React.FC<SentenceListProps> = ({ 
-  sentences, 
+export const SentenceList: React.FC<SentenceListProps> = ({
+  sentences,
   currentPrompt,
-  isLoading 
+  isLoading,
 }) => {
   return (
     <div className="space-y-4">
@@ -20,7 +21,10 @@ export const SentenceList: React.FC<SentenceListProps> = ({
           <div className="flex-shrink-0 mt-1">
             <MessageSquare size={20} className="text-blue-500" />
           </div>
-          <p className="text-white/90" dangerouslySetInnerHTML={{__html: transformToNewLine(sentence) }} />
+          <p
+            className="text-white/90"
+            dangerouslySetInnerHTML={{ __html: transformToNewLine(sentence) }}
+          />
         </div>
       ))}
       {(currentPrompt || isLoading) && (
@@ -32,9 +36,12 @@ export const SentenceList: React.FC<SentenceListProps> = ({
               <MessageSquare size={20} className="text-green-500" />
             )}
           </div>
-          <p className="text-green-400">
-            {currentPrompt}
-          </p>
+          <p
+            className="text-green-400"
+            dangerouslySetInnerHTML={{
+              __html: markedToHTML(currentPrompt ?? ""),
+            }}
+          />
         </div>
       )}
     </div>
