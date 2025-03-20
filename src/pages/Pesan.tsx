@@ -309,7 +309,7 @@ function PesanPage() {
             )}
           >
             <label className="block text-lg font-semibold" htmlFor="phone">
-              Masa Lisensi (Geser)
+              Masa Aktif Lisensi (Geser)
             </label>
 
             <span className="text-gray-400 inline-flex text-lg w-auto mb-4">
