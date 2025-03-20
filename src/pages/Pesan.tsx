@@ -1,13 +1,14 @@
 import cx from "clsx";
 import { Key } from "lucide-react";
 import { ChangeEvent, FormEvent, useMemo, useRef, useState } from "react";
-import { useLocalStorage } from "usehooks-ts";
+import { useBoolean, useLocalStorage } from "usehooks-ts";
 import { BCAIcon } from "../components/BCAIcon";
 import { HeaderTitle } from "../components/HeaderTitle";
 import { RangeSlider } from "../components/RangeSlider";
 import { NewOrderMutation, useNewOrder } from "../hooks/useAPI";
 import { Container } from "../layouts/container";
 import { DefaultLayout } from "../layouts/default";
+import { ConfirmModal } from "../components/ConfirmModal";
 
 const licenseTypes: Array<{
   licenseType: number;
@@ -21,7 +22,7 @@ const licenseTypes: Array<{
   {
     licenseType: 1,
     maxStory: 20,
-    maxParagraph: 65,
+    maxParagraph: 125,
     maxOutlineGeneration: 12,
     label: "Standard",
     basePrice: 35000,
@@ -37,7 +38,7 @@ const licenseTypes: Array<{
   {
     licenseType: 2,
     maxStory: 35,
-    maxParagraph: 150,
+    maxParagraph: 300,
     maxOutlineGeneration: 30,
     label: "Premium",
     basePrice: 50000,
@@ -111,6 +112,13 @@ function PesanPage() {
   >("lastOrder", null);
   const hasOrder = !!lastOrder;
 
+  const [errorMessage, setErrorMessage] = useState("");
+  const {
+    value: isErrorModalOpen,
+    setTrue: handleOpenErrorModal,
+    setFalse: handleCloseErrorModal,
+  } = useBoolean();
+
   const expDurationInMonth = useMemo(() => {
     const durationMonth =
       expDuration >= 4
@@ -139,12 +147,18 @@ function PesanPage() {
   const handleViewUpload = (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files?.length) return;
     const [file] = event.target.files;
+    const fileSizeMb = file.size / (1024 * 1024);
+    if (fileSizeMb >= 20) {
+      setErrorMessage("Ukuran file gambar harus kurang dari `20MB`");
+      return handleOpenErrorModal();
+    }
     const blobUrl = URL.createObjectURL(file);
     setUploadedImage(blobUrl);
   };
 
   const handleRemoveUploadedImage = () => {
     if (uploadRef?.current) {
+      uploadRef.current.value = "";
       uploadRef.current.setAttribute("key", "");
     }
     setUploadedImage(null);
@@ -173,12 +187,8 @@ function PesanPage() {
       const lastOrder = await newOrder.mutateAsync(payload);
       setLastOrder(lastOrder);
     } catch (error) {
-      console.error(error);
-      alert(
-        `An error occurred, contact support with this message: \`${
-          (error as Error).message
-        }\``,
-      );
+      setErrorMessage((error as Error).message);
+      handleOpenErrorModal();
     }
   };
 
@@ -196,6 +206,17 @@ function PesanPage() {
 
   return (
     <DefaultLayout>
+      <ConfirmModal
+        title="An error occurred"
+        isOpen={isErrorModalOpen}
+        onClose={handleCloseErrorModal}
+      >
+        <p className="leading-relaxed text-red-500">{errorMessage}</p>
+        <button className="mx-auto w-full" onClick={handleCloseErrorModal}>
+          OK
+        </button>
+      </ConfirmModal>
+
       <Container>
         <HeaderTitle
           title="Beli License Key"
@@ -366,7 +387,7 @@ function PesanPage() {
                         <strong className="underline">
                           {maxParagraph} paragraf
                         </strong>{" "}
-                        .
+                        per bulan.
                       </span>
                       <span>
                         <strong className="underline">
