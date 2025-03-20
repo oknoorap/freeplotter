@@ -1,4 +1,11 @@
-import { Check, Edit2, Loader, MessageSquare, Sparkles } from "lucide-react";
+import {
+  Check,
+  Edit2,
+  Loader,
+  MessageSquare,
+  Sparkles,
+  Clipboard,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { ulid } from "ulid";
 import { useBoolean } from "usehooks-ts";
@@ -263,6 +270,15 @@ function HomePage() {
     setEditingParagraphText("");
   };
 
+  const handleCopySuggestion = async () => {
+    if (!paragraphState.currentSuggestion) return;
+    try {
+      await navigator?.clipboard.writeText(paragraphState.currentSuggestion);
+    } catch (error) {
+      dispatchErrorModal("");
+    }
+  };
+
   const handleCheckLicenseValidity = async (licenseKey: string) => {
     try {
       await checkLicenseKey(licenseKey);
@@ -508,23 +524,31 @@ function HomePage() {
                                 />
                               )}
                             </div>
-                            <p
-                              className="text-green-400 select-none pointer-events-none"
-                              dangerouslySetInnerHTML={{
-                                __html: transformToNewLine(
-                                  paragraphState.currentSuggestion,
-                                ),
-                              }}
-                            />
+                            <div className="max-h-[200px] overflow-auto">
+                              <p
+                                className="text-green-400 select-none pointer-events-none"
+                                dangerouslySetInnerHTML={{
+                                  __html: transformToNewLine(
+                                    paragraphState.currentSuggestion,
+                                  ),
+                                }}
+                              />
+                            </div>
                           </div>
                           {!paragraphState.isLoading && (
-                            <div className="ml-8">
+                            <div className="ml-8 flex items-center gap-2">
                               <button
                                 onClick={handleDismissSuggestion}
                                 className="px-3 py-1 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-1"
                               >
                                 <Check size={16} />
                                 <span>OK</span>
+                              </button>
+                              <button
+                                className="px-3 py-1 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors flex items-center gap-1"
+                                onClick={handleCopySuggestion}
+                              >
+                                <Clipboard size={24} /> <span>Copy</span>
                               </button>
                             </div>
                           )}
