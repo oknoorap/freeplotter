@@ -17,9 +17,7 @@ export const ParagraphEditor: FC<ParagraphEditorProps> = ({
   onSave,
 }) => {
   const handleChange = (value: string) => {
-    if (value.length <= PARAGRAPH_LIMIT) {
-      onChange?.(value);
-    }
+    onChange?.(value.substring(0, PARAGRAPH_LIMIT));
   };
 
   return (

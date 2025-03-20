@@ -26,9 +26,7 @@ export const WritingPrompt: React.FC<WritingPromptProps> = ({
   };
 
   const handleChange = (value: string) => {
-    if (value.length <= MAX_LENGTH) {
-      setText(value);
-    }
+    setText(value.substring(0, MAX_LENGTH));
   };
 
   const handleKeydown = (e: React.KeyboardEvent) => {

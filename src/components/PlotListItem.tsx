@@ -45,8 +45,7 @@ export const PlotListItem: FC<PlotListItemProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const context = event.target.value;
-    if (context.length > INPUT_LIMIT) return;
+    const context = event.target.value.substring(0, INPUT_LIMIT);
     onChange?.({
       id: plot.id,
       context,
