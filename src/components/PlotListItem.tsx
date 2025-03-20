@@ -4,6 +4,7 @@ import {
   type FC,
   type KeyboardEvent,
   InputHTMLAttributes,
+  useEffect,
 } from "react";
 import { UniqueIdentifier } from "@dnd-kit/core";
 import { useSortable } from "@dnd-kit/sortable";
@@ -18,6 +19,7 @@ export type PlotItem = {
 export interface PlotListItemProps {
   plot: PlotItem;
   inputProps?: InputHTMLAttributes<HTMLInputElement>;
+  lastItem?: boolean;
   onChange?: (value: PlotItem) => void;
   onEnter?: () => void;
   onRemove?: (id: UniqueIdentifier) => void;
@@ -28,6 +30,7 @@ const INPUT_LIMIT = 100;
 export const PlotListItem: FC<PlotListItemProps> = ({
   plot,
   inputProps,
+  lastItem,
   onChange,
   onEnter,
   onRemove,
@@ -61,6 +64,10 @@ export const PlotListItem: FC<PlotListItemProps> = ({
 
   const handleRemove = () => onRemove?.(plot.id);
 
+  useEffect(() => {
+    if (lastItem) inputRef?.current?.focus();
+  }, [lastItem]);
+
   return (
     <div
       className="flex items-center gap-4 p-4 bg-gray-800 rounded-lg shadow-md focus-within:ring-2 focus-within:ring-blue-500"
@@ -73,7 +80,7 @@ export const PlotListItem: FC<PlotListItemProps> = ({
       <div className="flex gap-4 items-center flex-1">
         <input
           ref={inputRef}
-          className="flex-1 bg-transparent border-none outline-none text-lg placeholder:opacity-45 w-full"
+          className="plot-item flex-1 bg-transparent border-none outline-none text-lg placeholder:opacity-45 w-full"
           placeholder={`Add new plot [press \u23CE]`}
           value={plot.context}
           onChange={handleChange}
@@ -81,7 +88,8 @@ export const PlotListItem: FC<PlotListItemProps> = ({
           {...inputProps}
         />
         <div className="opacity-50">
-          {inputRef?.current?.value?.length ?? 0}/{INPUT_LIMIT}
+          {inputRef?.current?.value?.substring(0, INPUT_LIMIT).length ?? 0}/
+          {INPUT_LIMIT}
         </div>
       </div>
       {isRemovable && (

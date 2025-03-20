@@ -35,7 +35,6 @@ import { useCheckLicense, useGenerateOutline } from "../hooks/useAPI";
 import { useLicenseKey } from "../hooks/useLicenseKey";
 import { Container } from "../layouts/container";
 import { DefaultLayout } from "../layouts/default";
-import { markedToHTML } from "../utils/markdown";
 
 const PLOT_LIMIT = 50;
 
@@ -148,6 +147,7 @@ function OutlinePage() {
   const isGenerating = generateOutline.isLoading;
 
   const handleGenerateOutline = async () => {
+    if (isGenerating) return;
     if (!title.length || plots.length < 5) {
       return handleOpenInvalidFormModal();
     }
@@ -165,7 +165,7 @@ function OutlinePage() {
         <OutlineDocument
           title={title}
           summary={summary}
-          premise={markedToHTML(premise)}
+          premise={premise}
           outline={outline}
         />,
       ).toBlob();
@@ -335,10 +335,10 @@ function OutlinePage() {
                 Plots (Max {PLOT_LIMIT})
               </label>
               <p className="text-gray-400 text-lg mb-2 p-4 bg-gray-800 rounded-lg bg-opacity-80">
-                To get the best results, share your key scenes, exciting story
-                elements, and the moments that really bring your narrative to
-                life. The more details you provide, the better the system can
-                help refine and shape your story!
+                To get the best results, share the important events and moments
+                that readers will not forget in the story. The more details you
+                provide, the better the system can help refine and shape your
+                story!
               </p>
               <DndContext
                 sensors={sensors}
@@ -353,6 +353,7 @@ function OutlinePage() {
                     <PlotListItem
                       key={plot.id}
                       plot={plot}
+                      lastItem={plots.length - 1 === index}
                       inputProps={{ disabled: isGenerating }}
                       onChange={handlePlotContextChange(plot.id)}
                       onEnter={handleAddPlot}

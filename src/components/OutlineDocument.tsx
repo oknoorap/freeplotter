@@ -1,5 +1,6 @@
 import { FC } from "react";
 import { StyleSheet, Document, Page, Text, View } from "@react-pdf/renderer";
+import Html from "react-pdf-html";
 import { markedToHTML } from "../utils/markdown";
 
 const styles = StyleSheet.create({
@@ -92,12 +93,18 @@ export const OutlineDocument: FC<OutlineDocumentProps> = ({
 
       <Text style={styles.title}>{title}</Text>
 
-      {!!summary?.length && <Text style={styles.summary}>{summary}</Text>}
+      {!!summary?.length && (
+        <Text style={styles.summary}>
+          <Html>{summary}</Html>
+        </Text>
+      )}
 
       {premise && (
         <View style={styles.premise}>
           <Text style={styles.sectionTitle}>Premise</Text>
-          <Text style={styles.premiseContent}>{premise}</Text>
+          <Text style={styles.premiseContent}>
+            <Html>{markedToHTML(premise)}</Html>
+          </Text>
         </View>
       )}
 
@@ -109,10 +116,10 @@ export const OutlineDocument: FC<OutlineDocumentProps> = ({
             return (
               <View key={item.title} style={styles.outline}>
                 <Text key={item.title} style={styles.outlineTitle}>
-                  {markedToHTML(item.title)}
+                  <Html>{markedToHTML(item.title)}</Html>
                 </Text>
                 <Text key={item.title} style={styles.outlineContent}>
-                  {markedToHTML(item.content)}
+                  <Html>{markedToHTML(item.content)}</Html>
                 </Text>
               </View>
             );
