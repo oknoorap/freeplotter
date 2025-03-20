@@ -175,6 +175,10 @@ function PesanPage() {
       ) as NewOrderMutation["Request"];
       payload.append("price", totalTransfer.toString());
 
+      if (!payload.get("tximg").name || payload.get("tximg").size === 0) {
+        throw new Error("Anda harus mengunggah bukti transfer.");
+      }
+
       const startDate = new Date();
       const endDate = new Date(
         new Date(startDate).setMonth(
@@ -269,7 +273,6 @@ function PesanPage() {
               onChange={(e) => setEmail(e.target.value)}
               disabled={isInputDisabled}
               type="email"
-              pattern="^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$"
               id="email"
               name="email"
               placeholder="contoh: email@gmail.com"
@@ -380,20 +383,20 @@ function PesanPage() {
                       </div>
                       <span>
                         <strong className="underline">{maxStory} cerita</strong>{" "}
-                        per bulan.
+                        per bulan
                       </span>
                       <span>
                         Max{" "}
                         <strong className="underline">
                           {maxParagraph} paragraf
                         </strong>{" "}
-                        per bulan.
+                        per bulan
                       </span>
                       <span>
                         <strong className="underline">
                           {maxOutlineGeneration} outline (PDF)
                         </strong>{" "}
-                        per bulan.
+                        per bulan
                       </span>
                     </button>
                   );
