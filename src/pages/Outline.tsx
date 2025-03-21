@@ -313,7 +313,7 @@ function OutlinePage() {
                   <RangeSlider
                     id="chapters"
                     step={1}
-                    min={1}
+                    min={5}
                     max={50}
                     value={numChapters}
                     onChange={handleNumChaptersChange}
